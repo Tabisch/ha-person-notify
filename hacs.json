@@ -1,6 +1,6 @@
 {
-  "name": "EventSubscription",
-  "domains": ["eventsubscription"],
+  "name": "ha-person-notify",
+  "domains": ["ha-person-notify"],
   "hide_default_branch": true,
   "iot_class": "local"
 }
