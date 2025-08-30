@@ -1,0 +1,12 @@
+{
+  "domain": "ha-person-notify",
+  "name": "ha-person-notify",
+  "codeowners": [
+    "@tabisch"
+  ],
+  "integration_type": "helper",
+  "documentation": "https://github.com/Tabisch/ha-person-notify",
+  "iot_class": "assumed_state",
+  "issue_tracker": "https://github.com/Tabisch/ha-person-notify/issues",
+  "version": "0.0.1"
+}
