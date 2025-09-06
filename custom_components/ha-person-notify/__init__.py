@@ -3,7 +3,7 @@
 from __future__ import annotations
 import logging
 
-from homeassistant.core import HomeAssistant
+from homeassistant.core import HomeAssistant, ServiceCall
 import homeassistant.helpers.config_validation as cv
 from homeassistant.helpers.typing import ConfigType
 from homeassistant.core import State
@@ -82,5 +82,13 @@ async def async_setup(hass: HomeAssistant, config: ConfigType) -> bool:
             continue
 
         await createEntry(hass=hass, person_entity=person_entity)
+
+    async def handle_send_message_dynamic(call: ServiceCall):
+        print(call.context.as_dict())
+        print(call.data)
+
+    hass.services.async_register(
+        DOMAIN, "send_message_dynamic", handle_send_message_dynamic
+    )
 
     return True
