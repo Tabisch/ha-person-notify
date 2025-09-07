@@ -3,7 +3,7 @@
 from __future__ import annotations
 import logging
 
-from homeassistant.core import HomeAssistant, ServiceCall
+from homeassistant.core import HomeAssistant, ServiceCall, Event
 import homeassistant.helpers.config_validation as cv
 from homeassistant.helpers.typing import ConfigType
 from homeassistant.core import State
@@ -83,12 +83,39 @@ async def async_setup(hass: HomeAssistant, config: ConfigType) -> bool:
 
         await createEntry(hass=hass, person_entity=person_entity)
 
+    contextUserMapping = {}
+
+    async def handle_event(event: Event):
+        if event.context.user_id != None:
+            contextUserMapping[event.context.id] = event.context.user_id
+
+    hass.bus.async_listen("*", handle_event)
+
     async def handle_send_message_dynamic(call: ServiceCall):
-        print(call.context.as_dict())
-        print(call.data)
+        userid = contextUserMapping[call.context.parent_id]
+
+        notify_entries = call.hass.config_entries.async_entries(domain="group")
+        person_notify_entities = []
+
+        for entry in notify_entries:
+            if entry.source == "personnotify":
+                person_notify_entities.append(entry)
+
+        for entry in person_notify_entities:
+            if entry.data["user_id"] == userid:
+                _LOGGER.debug(f"Notifiy user with user_id {userid}")
+
+                await call.hass.services.async_call(
+                    domain="notify",
+                    service="send_message",
+                    target={
+                        "entity_id": f"{entry.options['group_type']}.{entry.options['name']}"
+                    },
+                    service_data={"title": "", "message": call.data["message"]},
+                )
 
     hass.services.async_register(
-        DOMAIN, "send_message_dynamic", handle_send_message_dynamic
+        DOMAIN, "sendmessagedynamic", handle_send_message_dynamic
     )
 
     return True

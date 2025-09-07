@@ -1,6 +1,6 @@
 {
-  "domain": "ha-person-notify",
-  "name": "ha-person-notify",
+  "domain": "personnotify",
+  "name": "personnotify",
   "codeowners": [
     "@tabisch"
   ],

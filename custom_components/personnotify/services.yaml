@@ -1,0 +1,11 @@
+sendmessagedynamic:
+  name: sendmessagedynamic
+  description: sendmessagedynamic from context to an event
+  fields:
+    message:
+      name: Message
+      description: Message
+      required: true
+      example: "EventSubscription registered"
+      selector:
+        text:
