@@ -97,15 +97,20 @@ async def async_setup(hass: HomeAssistant, config: ConfigType) -> bool:
         # check if event is already in list
         # if not wait 100ms and recheck up to one second
         # only here to prevent errors, when an automation tries to send a message before the event has been logged in eventIdUserMapping
-        retryCount = 0
-        while call.context.parent_id not in eventIdUserMapping.keys():
-            _LOGGER.debug(f"{call.context.parent_id} in yet in eventIdUserMapping")
-            retryCount = retryCount + 1
-            if retryCount == 10:
-                return
-            await asyncio.sleep(0.1)
 
-        userid = eventIdUserMapping[call.context.parent_id]
+        userid = call.context.user_id
+
+        if call.context.user_id == None:
+            retryCount = 0
+            while call.context.parent_id not in eventIdUserMapping.keys():
+                _LOGGER.debug(f"{call.context.parent_id} in yet in eventIdUserMapping")
+                retryCount = retryCount + 1
+                if retryCount == 10:
+                    _LOGGER.debug(f"{call.context.parent_id} - Failed to get userid")
+                    return
+                await asyncio.sleep(0.1)
+
+            userid = eventIdUserMapping[call.context.parent_id]
 
         notify_entries = call.hass.config_entries.async_entries(domain="group")
         person_notify_entities = []
