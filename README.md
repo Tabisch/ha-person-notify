@@ -1,6 +1,6 @@
 # ha-person-notify
 
-This integration has the goal to provides a more user/person centric way of sending. 
+This integration has the goal to provides a more user/person centric way of notifying users. 
 
 ## Features
 - Auto create notify groups for each person, that is tied back to the user.
