@@ -10,9 +10,14 @@ This integration has the goal to provides a more user/person centric way of noti
 Add `personnotify:` to your configuration.yaml, then restart Home Assistant
 
 ## How to use
+### Groups
 Go to Helpers, your notify groups should be listed there.
 <img width="1368" height="419" alt="image" src="https://github.com/user-attachments/assets/0403f463-f539-4f94-9bdd-f5a70713b07c" />
 
+### Action
+Add the `sendmessagedynamic` action to your automation. \
+The action should figure out, where to send the message.
+<img width="1357" height="510" alt="image" src="https://github.com/user-attachments/assets/5dd69d4b-62ef-4e85-87ed-6b3e48ac2d58" />
 
 ## TODOs
 - Create group on person creation (Groups for users are only created at startup, so if you create a new user you have to restart the instance.)
