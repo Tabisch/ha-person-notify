@@ -3,6 +3,8 @@
 from __future__ import annotations
 import logging
 
+from hawhodid import WhoDid
+
 from homeassistant.core import HomeAssistant, ServiceCall, Event
 import homeassistant.helpers.config_validation as cv
 from homeassistant.helpers.typing import ConfigType
@@ -84,33 +86,13 @@ async def async_setup(hass: HomeAssistant, config: ConfigType) -> bool:
 
         await createEntry(hass=hass, person_entity=person_entity)
 
-    # eventIdUserMapping might need some way of clearing it out, bcs atm it will grow forever
-    eventIdUserMapping = {}
-
-    async def handle_event(event: Event):
-        if event.context.user_id != None:
-            eventIdUserMapping[event.context.id] = event.context.user_id
-
-    hass.bus.async_listen("*", handle_event)
-
     async def handle_send_message_dynamic(call: ServiceCall):
-        # check if event is already in list
-        # if not wait 100ms and recheck up to one second
-        # only here to prevent errors, when an automation tries to send a message before the event has been logged in eventIdUserMapping
+        whodidInstance = WhoDid(hass=call.hass)
 
-        userid = call.context.user_id
+        userid = await whodidInstance.getUserId(context=call.context)
 
-        if call.context.user_id == None:
-            retryCount = 0
-            while call.context.parent_id not in eventIdUserMapping.keys():
-                _LOGGER.debug(f"{call.context.parent_id} in yet in eventIdUserMapping")
-                retryCount = retryCount + 1
-                if retryCount == 10:
-                    _LOGGER.debug(f"{call.context.parent_id} - Failed to get userid")
-                    return
-                await asyncio.sleep(0.1)
-
-            userid = eventIdUserMapping[call.context.parent_id]
+        if userid == None:
+            return
 
         notify_entries = call.hass.config_entries.async_entries(domain="group")
         person_notify_entities = []
